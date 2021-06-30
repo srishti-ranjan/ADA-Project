@@ -1,0 +1,76 @@
+
+total_weight=0
+total_value=0
+num_of_items = int(input("Enter the number of items you own: "))
+capacity = int(input("What is the capacity of the bag: "))
+i=1
+
+#Initialize backpack
+B=[[0]*(capacity+1) for i in range(num_of_items)]
+
+#Keep list will help determine which items to keep once we've solved the Knapsack problem
+keep=[[0]*(capacity+1) for i in range(num_of_items)]
+
+# Create your dictionary class  
+class my_dictionary(dict):  
+  
+    # __init__ function  
+    def __init__(self):  
+        self = dict()  
+          
+    # Function to add key:value  
+    def add(self, key, value):  
+        self[key] = value
+        
+# Dictionary for the weight of items  
+item_weight = my_dictionary()
+for i in range (num_of_items):
+
+    item_weight.key = i
+    item_weight.value = int(input("Enter the weight: "))
+    item_weight.add(item_weight.key, item_weight.value)   
+
+print("Enter priority values of each item starting from 0,1,2,..")
+
+# Dictionary for the priority of items 
+item_value = my_dictionary()
+for i in range (num_of_items):
+
+    item_value.key = i
+    item_value.value = int(input("Enter the value: "))
+    item_value.add(item_value.key, item_value.value)   
+
+total_weight=sum([value for value in item_weight.values()])
+total_value=sum([value for value in item_value.values()])
+
+#Solve Knapsack problem
+for k in range(num_of_items):
+    for w in range(capacity+1):
+        if(w>=item_weight[k]):
+            p1=B[k-1][w]
+            p2=B[k-1][w-item_weight[k]]+item_value[k]
+            if(p1>p2):
+                keep[k][w]=0
+                B[k][w]=p1
+            else:
+                keep[k][w]=1
+                B[k][w]=p2
+        else:
+            B[k][w]= B[k-1][w]
+            keep[k][w]=0
+            
+rem_capacity=capacity
+items_to_take=[]
+valueofgoods=0
+
+#Determine which items to keep and what their total value is       
+for k in range(num_of_items-1,-1,-1):
+    if(keep[k][rem_capacity]==1):
+        items_to_take.append(k)
+        rem_capacity=rem_capacity-item_weight[k]
+        valueofgoods+=item_value[k]
+        
+print ('Total value of all goods: ',(total_value))
+print ('Goods to choose: ',(items_to_take))
+print ('Maximized Value(priority) of goods: ',(valueofgoods))
+print ('Opportunity cost: ',(total_value-valueofgoods))  
